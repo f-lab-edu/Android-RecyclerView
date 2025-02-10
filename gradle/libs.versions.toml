@@ -1,24 +1,44 @@
 [versions]
-agp = "8.6.0"
-kotlin = "1.9.0"
+agp = "8.6.1"
+activity = "1.10.0"
+appcompat = "1.7.0"
+constraintlayout = "2.2.0"
 coreKtx = "1.15.0"
+coreTest = "2.2.0"
+coroutine="1.10.1"
+coroutinesTest="1.10.1"
+espressoCore = "3.6.1"
+espressoContrib = "3.6.1"
 junit = "4.13.2"
 junitVersion = "1.2.1"
-espressoCore = "3.6.1"
-appcompat = "1.7.0"
+kotlin = "2.1.0"
+kotlinTest="2.1.0"
+liveData = "2.8.7"
 material = "1.12.0"
-constraintlayout = "2.2.0"
-navigationFragmentKtx = "2.6.0"
-navigationUiKtx = "2.6.0"
+navigationFragmentKtx = "2.8.6"
+navigationUiKtx = "2.8.6"
+recyclerView = "1.4.0"
+rules = "1.6.1"
+runner = "1.6.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
+rules = { group = "androidx.test", name = "rules", version.ref = "rules" }
+runner = { group = "androidx.test", name = "runner", version.ref = "runner" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+androidx-espresso-contrib = { group = "androidx.test.espresso", name = "espresso-contrib", version.ref = "espressoContrib" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+androidx-core-test = { group = "androidx.arch.core", name = "core-testing", version.ref = "coreTest"}
+androidx-recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "recyclerView" }
+androidx-lifecycle = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "liveData" }
+kotlin-coroutine = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutine" }
+kotlin-coroutine-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutinesTest" }
+kotlin-test = { group = "org.jetbrains.kotlin", name = "kotlin-test", version.ref = "kotlinTest"}
 androidx-navigation-fragment-ktx = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "navigationFragmentKtx" }
 androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigationUiKtx" }
 

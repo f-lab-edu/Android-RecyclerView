@@ -33,6 +33,10 @@ class StateFlowViewModel : ViewModel() {
     }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     init {
+        createItems()
+    }
+
+    fun createItems() {
         _items.value = CreateUtils.createRandomAlphabetItems()
     }
 

@@ -5,6 +5,8 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.jg.android_recyclerview.databinding.ActivityMainBinding
+import com.jg.android_recyclerview.model.ItemType
+import com.jg.android_recyclerview.model.ViewMode
 import com.jg.android_recyclerview.ui.adapter.MainAdapter
 import com.jg.android_recyclerview.viewmodel.StateFlowViewModel
 import kotlinx.coroutines.launch
@@ -30,14 +32,20 @@ class MainActivity : AppCompatActivity() {
         binding.recyclerView.adapter = mainAdapter
 
         mainAdapter.setOnItemClickListener { item ->
-            viewModel.moveToTrash(item)
+            when (item.type) {
+                ItemType.NORMAL -> viewModel.moveToTrash(item)
+                ItemType.TRASH -> viewModel.restoreItem(item)
+            }
         }
     }
 
     private fun observeViewModel() {
         lifecycleScope.launch {
             viewModel.currentMode.collect { mode ->
-                binding.btnToggle.text = "휴지통 보기"
+                binding.btnToggle.text = when (mode) {
+                    ViewMode.NORMAL -> "휴지통 보기"
+                    ViewMode.TRASH -> "목록 보기"
+                }
             }
         }
 

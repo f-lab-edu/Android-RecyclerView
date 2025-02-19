@@ -44,7 +44,7 @@ class StateFlowViewModel : ViewModel() {
     private val timerJobs = mutableMapOf<String, Job>()
 
     private fun startTimer(item: ListItem, onTimerComplete: (ListItem) -> Unit) {
-        // 이전 타이머 취소
+        // 이전 타이머 취소 (중복 실행 : 같은 아이템에 대해 여러 타이머가 실행될 여지를 위함)
         timerJobs[item.id]?.cancel()
 
         timerJobs[item.id] = timerScope.launch {

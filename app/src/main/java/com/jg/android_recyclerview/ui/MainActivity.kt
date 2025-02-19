@@ -1,9 +1,12 @@
 package com.jg.android_recyclerview.ui
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.findNavController
+import com.jg.android_recyclerview.R
 import com.jg.android_recyclerview.databinding.ActivityMainBinding
 import com.jg.android_recyclerview.model.ItemType
 import com.jg.android_recyclerview.model.ViewMode
@@ -14,8 +17,6 @@ import kotlinx.coroutines.launch
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private val mainAdapter = MainAdapter()
-    private val viewModel: StateFlowViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,42 +24,19 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setupRecyclerView()
-        observeViewModel()
         setupBtn()
     }
 
-    private fun setupRecyclerView() {
-        binding.recyclerView.adapter = mainAdapter
-
-        mainAdapter.setOnItemClickListener { item ->
-            when (item.type) {
-                ItemType.NORMAL -> viewModel.moveToTrash(item)
-                ItemType.TRASH -> viewModel.restoreItem(item)
-            }
-        }
-    }
-
-    private fun observeViewModel() {
-        lifecycleScope.launch {
-            viewModel.currentMode.collect { mode ->
-                binding.btnToggle.text = when (mode) {
-                    ViewMode.NORMAL -> "휴지통 보기"
-                    ViewMode.TRASH -> "목록 보기"
-                }
-            }
-        }
-
-        lifecycleScope.launch {
-            viewModel.displayItems.collect { itmes ->
-                mainAdapter.submitList(itmes)
-            }
-        }
-    }
-
     private fun setupBtn() {
-        binding.btnToggle.setOnClickListener {
-            viewModel.switchToTrashOrNormal()
+        binding.btnActivity.setOnClickListener {
+            // Navigation 대신 Intent 사용
+            startActivity(Intent(this, ListActivity::class.java))
+        }
+
+        binding.btnFragment.setOnClickListener {
+            setContentView(R.layout.content_main)
+            findNavController(R.id.nav_host_fragment_content_main)
+                .navigate(R.id.action_global_FirstFragment)
         }
     }
 }

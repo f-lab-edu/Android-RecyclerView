@@ -2,4 +2,7 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="progress_restore">#2196F3</color>  <!-- 파란색 -->
+    <color name="progress_delete">#F44336</color>   <!-- 빨간색 -->
 </resources>

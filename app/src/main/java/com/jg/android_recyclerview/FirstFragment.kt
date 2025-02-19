@@ -5,19 +5,24 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.jg.android_recyclerview.databinding.FragmentFirstBinding
+import com.jg.android_recyclerview.ui.adapter.MainAdapter
+import com.jg.android_recyclerview.viewmodel.StateFlowViewModel
+import kotlinx.coroutines.launch
 
 /**
- * 샘플이지만, 추후 사용 예정으로 삭제 하지 않음
+ * 목록 리스트
  */
 class FirstFragment : Fragment() {
 
     private var _binding: FragmentFirstBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val binding get() = _binding!!
+    private val mainAdapter = MainAdapter()
+    private val viewModel: StateFlowViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,8 +37,31 @@ class FirstFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.buttonFirst.setOnClickListener {
+        setupRecyclerView()
+        setupButton()
+        observeViewModel()
+    }
+
+    private fun setupRecyclerView() {
+        binding.recyclerViewNormal.adapter = mainAdapter
+
+        mainAdapter.setOnItemClickListener { item ->
+            viewModel.moveToTrash(item)
             findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
+        }
+    }
+
+    private fun setupButton() {
+        binding.btnShowTrash.setOnClickListener {
+            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
+        }
+    }
+
+    private fun observeViewModel() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.displayItems.collect { items ->
+                mainAdapter.submitList(items)
+            }
         }
     }
 

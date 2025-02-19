@@ -1,8 +1,11 @@
 package com.jg.android_recyclerview.ui.adapter
 
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.jg.android_recyclerview.R
@@ -58,6 +61,9 @@ class MainAdapter : ListAdapter<ListItem, RecyclerView.ViewHolder>(DiffCallback(
 
     inner class TrashViewHolder(private val binding: ItemListBinding) :
         RecyclerView.ViewHolder(binding.root) {
+
+        private var isRestoreMode = false
+
         fun bind(item: ListItem) {
             binding.apply {
                 tvContent.text = "${item.content} (휴지통)"
@@ -66,6 +72,20 @@ class MainAdapter : ListAdapter<ListItem, RecyclerView.ViewHolder>(DiffCallback(
                 ivTrash.setImageResource(R.drawable.ic_restore)
                 ivTrash.setOnClickListener {
                     tvContent.text = "${item.content} (복구중)"
+
+                    isRestoreMode = !isRestoreMode  // 모드 토글
+
+                    // 색상 변경
+                    progressBar.apply {
+                        progressTintList = ColorStateList.valueOf(
+                            ContextCompat.getColor(
+                                context,
+                                if (isRestoreMode) R.color.progress_restore else R.color.progress_delete
+                            )
+                        )
+                        contentDescription = if (isRestoreMode) "복구 진행중" else "삭제 진행중"
+                    }
+
                     onItemClick?.invoke(item)
                 }
             }

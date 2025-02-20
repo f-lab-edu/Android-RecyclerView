@@ -10,18 +10,18 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.jg.android_recyclerview.databinding.FragmentTrashBinding
 import com.jg.android_recyclerview.ui.adapter.MainAdapter
+import com.jg.android_recyclerview.ui.base.BaseFragment
 import com.jg.android_recyclerview.viewmodel.StateFlowViewModel
 import kotlinx.coroutines.launch
 
 /**
  * 휴지통 목록
  */
-class TrashFragment : Fragment() {
+class TrashFragment : BaseFragment() {
 
     private var _binding: FragmentTrashBinding? = null
     private val binding get() = _binding!!
     private val mainAdapter = MainAdapter()
-    private val viewModel: StateFlowViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,9 +44,15 @@ class TrashFragment : Fragment() {
     private fun setupRecyclerView() {
         binding.recyclerViewTrash.adapter = mainAdapter
 
+        // 중복 방지
+        var isProcessing = false
+
         mainAdapter.setOnItemClickListener { item ->
-            // TODO 복구 시 리스트 한개가 더 생김 처리 필요
-            viewModel.restoreItem(item)
+            if (!isProcessing) {
+                isProcessing = true
+                viewModel.restoreItem(item)
+                isProcessing = false
+            }
         }
     }
 

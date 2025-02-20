@@ -10,19 +10,21 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.jg.android_recyclerview.R
 import com.jg.android_recyclerview.databinding.FragmentNormalBinding
+import com.jg.android_recyclerview.model.ViewMode
 import com.jg.android_recyclerview.ui.adapter.MainAdapter
+import com.jg.android_recyclerview.ui.base.BaseFragment
 import com.jg.android_recyclerview.viewmodel.StateFlowViewModel
 import kotlinx.coroutines.launch
 
 /**
  * 목록 리스트
  */
-class NormalFragment : Fragment() {
+class NormalFragment : BaseFragment() {
 
     private var _binding: FragmentNormalBinding? = null
     private val binding get() = _binding!!
     private val mainAdapter = MainAdapter()
-    private val viewModel: StateFlowViewModel by activityViewModels()
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

@@ -47,6 +47,7 @@ class StateFlowViewModel : ViewModel() {
         // 이전 타이머 취소 (중복 실행 : 같은 아이템에 대해 여러 타이머가 실행될 여지를 위함)
         timerJobs[item.id]?.cancel()
 
+        // TODO 뭔가 타이밍 이슈가 있는데 잡질 못한다..
         timerJobs[item.id] = timerScope.launch {
             createTimerFlow().collect { remainingTime ->
                 // 현재 아이템이 휴지통에 있는 경우에만 업데이트

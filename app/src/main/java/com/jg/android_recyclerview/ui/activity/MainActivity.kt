@@ -1,4 +1,4 @@
-package com.jg.android_recyclerview.ui
+package com.jg.android_recyclerview.ui.activity
 
 import android.content.Intent
 import android.os.Bundle
@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import com.jg.android_recyclerview.R
 import com.jg.android_recyclerview.databinding.ActivityMainBinding
-import com.jg.android_recyclerview.ui.activity.ListActivity
 
 class MainActivity : AppCompatActivity() {
 

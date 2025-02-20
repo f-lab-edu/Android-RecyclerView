@@ -11,11 +11,9 @@ import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.jg.android_recyclerview.ui.MainActivity
+import com.jg.android_recyclerview.ui.activity.MainActivity
 import com.jg.android_recyclerview.ui.adapter.MainAdapter
 import org.hamcrest.Matcher
-import org.hamcrest.Matchers.`is`
-import org.hamcrest.Matchers.not
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith

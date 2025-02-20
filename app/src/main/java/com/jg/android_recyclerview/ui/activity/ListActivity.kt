@@ -8,14 +8,14 @@ import com.jg.android_recyclerview.databinding.ActivityListBinding
 import com.jg.android_recyclerview.model.ItemType
 import com.jg.android_recyclerview.model.ViewMode
 import com.jg.android_recyclerview.ui.adapter.MainAdapter
-import com.jg.android_recyclerview.viewmodel.StateFlowViewModel
+import com.jg.android_recyclerview.viewmodel.ListViewModel
 import kotlinx.coroutines.launch
 
 class ListActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityListBinding
     private val mainAdapter = MainAdapter()
-    private val viewModel: StateFlowViewModel by viewModels()
+    private val viewModel: ListViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,10 +32,7 @@ class ListActivity : AppCompatActivity() {
         binding.recyclerView.adapter = mainAdapter
 
         mainAdapter.setOnItemClickListener { item ->
-            when (item.type) {
-                ItemType.NORMAL -> viewModel.moveToTrash(item)
-                ItemType.TRASH -> viewModel.restoreItem(item)
-            }
+            viewModel.switchItemType(type = item.type, item = item)
         }
     }
 

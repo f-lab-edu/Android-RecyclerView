@@ -4,14 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.jg.android_recyclerview.databinding.FragmentTrashBinding
 import com.jg.android_recyclerview.ui.adapter.MainAdapter
 import com.jg.android_recyclerview.ui.base.BaseFragment
-import com.jg.android_recyclerview.viewmodel.StateFlowViewModel
 import kotlinx.coroutines.launch
 
 /**

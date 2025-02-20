@@ -1,6 +1,6 @@
 package com.jg.android_recyclerview
 
-import com.jg.android_recyclerview.viewmodel.StateFlowViewModel
+import com.jg.android_recyclerview.viewmodel.ListViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
@@ -21,8 +21,8 @@ import kotlin.test.DefaultAsserter.assertTrue
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class StateFlowViewModelTest {
-    private lateinit var viewModel: StateFlowViewModel
+class ListViewModelTest {
+    private lateinit var viewModel: ListViewModel
 
     private val testDispatcher = StandardTestDispatcher()
     private val testScope = TestScope(testDispatcher)
@@ -33,7 +33,7 @@ class StateFlowViewModelTest {
     @Before
     fun setup() = runTest(testDispatcher) {
         Dispatchers.setMain(testDispatcher)
-        viewModel = StateFlowViewModel()
+        viewModel = ListViewModel()
 
         // 초기화 위한 코루틴 스코프
         val job = launch {

@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class StateFlowViewModel : ViewModel() {
+class ListViewModel : ViewModel() {
     private val _items = MutableStateFlow<List<ListItem>>(emptyList())
     private val _trashItems = MutableStateFlow<List<ListItem>>(emptyList())
     private val _currentMode = MutableStateFlow(ViewMode.NORMAL)
@@ -71,6 +71,13 @@ class StateFlowViewModel : ViewModel() {
             timerJobs.remove(item.id)
         }
 
+    }
+
+    fun switchItemType(type: ItemType, item: ListItem) {
+        when (type) {
+            ItemType.NORMAL -> moveToTrash(item)
+            ItemType.TRASH -> restoreItem(item)
+        }
     }
 
     fun moveToTrash(item: ListItem) {

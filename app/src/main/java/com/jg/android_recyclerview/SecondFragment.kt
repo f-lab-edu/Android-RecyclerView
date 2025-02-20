@@ -9,7 +9,7 @@ import androidx.navigation.fragment.findNavController
 import com.jg.android_recyclerview.databinding.FragmentSecondBinding
 
 /**
- * A simple [Fragment] subclass as the second destination in the navigation.
+ * 샘플이지만, 추후 사용 예정으로 삭제 하지 않음
  */
 class SecondFragment : Fragment() {
 

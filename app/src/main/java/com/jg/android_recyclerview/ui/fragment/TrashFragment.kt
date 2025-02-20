@@ -1,25 +1,24 @@
-package com.jg.android_recyclerview
+package com.jg.android_recyclerview.ui.fragment
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.jg.android_recyclerview.databinding.FragmentFirstBinding
+import com.jg.android_recyclerview.databinding.FragmentTrashBinding
 import com.jg.android_recyclerview.ui.adapter.MainAdapter
 import com.jg.android_recyclerview.viewmodel.StateFlowViewModel
 import kotlinx.coroutines.launch
 
 /**
- * 목록 리스트
+ * 휴지통 목록
  */
-class FirstFragment : Fragment() {
+class TrashFragment : Fragment() {
 
-    private var _binding: FragmentFirstBinding? = null
+    private var _binding: FragmentTrashBinding? = null
     private val binding get() = _binding!!
     private val mainAdapter = MainAdapter()
     private val viewModel: StateFlowViewModel by activityViewModels()
@@ -29,7 +28,7 @@ class FirstFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        _binding = FragmentFirstBinding.inflate(inflater, container, false)
+        _binding = FragmentTrashBinding.inflate(inflater, container, false)
         return binding.root
 
     }
@@ -43,17 +42,18 @@ class FirstFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        binding.recyclerViewNormal.adapter = mainAdapter
+        binding.recyclerViewTrash.adapter = mainAdapter
 
         mainAdapter.setOnItemClickListener { item ->
-            viewModel.moveToTrash(item)
-            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
+            // TODO 복구 시 리스트 한개가 더 생김 처리 필요
+            viewModel.restoreItem(item)
         }
     }
 
     private fun setupButton() {
-        binding.btnShowTrash.setOnClickListener {
-            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
+        binding.btnShowNormal.setOnClickListener {
+            viewModel.switchToTrashOrNormal()
+            findNavController().popBackStack()
         }
     }
 

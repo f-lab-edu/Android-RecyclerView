@@ -2,17 +2,11 @@ package com.jg.android_recyclerview.ui
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import com.jg.android_recyclerview.R
 import com.jg.android_recyclerview.databinding.ActivityMainBinding
-import com.jg.android_recyclerview.model.ItemType
-import com.jg.android_recyclerview.model.ViewMode
-import com.jg.android_recyclerview.ui.adapter.MainAdapter
-import com.jg.android_recyclerview.viewmodel.StateFlowViewModel
-import kotlinx.coroutines.launch
+import com.jg.android_recyclerview.ui.activity.ListActivity
 
 class MainActivity : AppCompatActivity() {
 

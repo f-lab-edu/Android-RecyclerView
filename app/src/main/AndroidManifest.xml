@@ -23,7 +23,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.ListActivity"
+            android:name=".ui.activity.ListActivity"
             android:exported="false"/>
 
     </application>

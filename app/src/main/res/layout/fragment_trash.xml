@@ -5,27 +5,27 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".FirstFragment">
+    tools:context=".ui.fragment.NormalFragment">
 
     <Button
-        android:id="@+id/btnShowTrash"
+        android:id="@+id/btnShowNormal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_normal"
         android:layout_marginEnd="@dimen/margin_normal"
-        android:text="휴지통 보기"
+        android:text="목록 보기"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewNormal"
+        android:id="@+id/recyclerViewTrash"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginHorizontal="@dimen/margin_normal"
         android:layout_marginVertical="@dimen/margin_normal"
         android:clipToPadding="false"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintTop_toBottomOf="@+id/btnShowTrash"
+        app:layout_constraintTop_toBottomOf="@+id/btnShowNormal"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>

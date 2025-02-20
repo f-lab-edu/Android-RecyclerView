@@ -1,4 +1,4 @@
-package com.jg.android_recyclerview
+package com.jg.android_recyclerview.ui.fragment
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -8,17 +8,18 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.jg.android_recyclerview.databinding.FragmentSecondBinding
+import com.jg.android_recyclerview.R
+import com.jg.android_recyclerview.databinding.FragmentNormalBinding
 import com.jg.android_recyclerview.ui.adapter.MainAdapter
 import com.jg.android_recyclerview.viewmodel.StateFlowViewModel
 import kotlinx.coroutines.launch
 
 /**
- * 휴지통 목록
+ * 목록 리스트
  */
-class SecondFragment : Fragment() {
+class NormalFragment : Fragment() {
 
-    private var _binding: FragmentSecondBinding? = null
+    private var _binding: FragmentNormalBinding? = null
     private val binding get() = _binding!!
     private val mainAdapter = MainAdapter()
     private val viewModel: StateFlowViewModel by activityViewModels()
@@ -28,9 +29,8 @@ class SecondFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        _binding = FragmentSecondBinding.inflate(inflater, container, false)
+        _binding = FragmentNormalBinding.inflate(inflater, container, false)
         return binding.root
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -42,18 +42,17 @@ class SecondFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        binding.recyclerViewTrash.adapter = mainAdapter
+        binding.recyclerViewNormal.adapter = mainAdapter
 
         mainAdapter.setOnItemClickListener { item ->
-            // TODO 복구 시 리스트 한개가 더 생김 처리 필요
-            viewModel.restoreItem(item)
+            viewModel.moveToTrash(item)
         }
     }
 
     private fun setupButton() {
-        binding.btnShowNormal.setOnClickListener {
+        binding.btnShowTrash.setOnClickListener {
             viewModel.switchToTrashOrNormal()
-            findNavController().popBackStack()
+            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
         }
     }
 

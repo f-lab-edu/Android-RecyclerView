@@ -1,11 +1,10 @@
-package com.jg.android_recyclerview.ui
+package com.jg.android_recyclerview.ui.activity
 
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.jg.android_recyclerview.databinding.ActivityListBinding
-import com.jg.android_recyclerview.databinding.ActivityMainBinding
 import com.jg.android_recyclerview.model.ItemType
 import com.jg.android_recyclerview.model.ViewMode
 import com.jg.android_recyclerview.ui.adapter.MainAdapter

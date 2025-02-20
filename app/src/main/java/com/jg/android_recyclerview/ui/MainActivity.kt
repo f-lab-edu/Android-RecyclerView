@@ -1,19 +1,16 @@
 package com.jg.android_recyclerview.ui
 
+import android.content.Intent
 import android.os.Bundle
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
+import androidx.navigation.findNavController
+import com.jg.android_recyclerview.R
 import com.jg.android_recyclerview.databinding.ActivityMainBinding
-import com.jg.android_recyclerview.ui.adapter.MainAdapter
-import com.jg.android_recyclerview.viewmodel.StateFlowViewModel
-import kotlinx.coroutines.launch
+import com.jg.android_recyclerview.ui.activity.ListActivity
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private val mainAdapter = MainAdapter()
-    private val viewModel: StateFlowViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,36 +18,19 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setupRecyclerView()
-        observeViewModel()
         setupBtn()
     }
 
-    private fun setupRecyclerView() {
-        binding.recyclerView.adapter = mainAdapter
-
-        mainAdapter.setOnItemClickListener { item ->
-            viewModel.moveToTrash(item)
-        }
-    }
-
-    private fun observeViewModel() {
-        lifecycleScope.launch {
-            viewModel.currentMode.collect { mode ->
-                binding.btnToggle.text = "휴지통 보기"
-            }
-        }
-
-        lifecycleScope.launch {
-            viewModel.displayItems.collect { itmes ->
-                mainAdapter.submitList(itmes)
-            }
-        }
-    }
-
     private fun setupBtn() {
-        binding.btnToggle.setOnClickListener {
-            viewModel.switchToTrashOrNormal()
+        binding.btnActivity.setOnClickListener {
+            // Navigation 대신 Intent 사용
+            startActivity(Intent(this, ListActivity::class.java))
+        }
+
+        binding.btnFragment.setOnClickListener {
+            setContentView(R.layout.content_main)
+            findNavController(R.id.nav_host_fragment_content_main)
+                .navigate(R.id.action_global_FirstFragment)
         }
     }
 }

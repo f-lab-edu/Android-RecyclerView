@@ -3,7 +3,7 @@ package com.jg.android_recyclerview
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.jg.android_recyclerview.model.ItemType
 import com.jg.android_recyclerview.model.ListItem
-import com.jg.android_recyclerview.ui.adapter.MainAdapter
+import com.jg.android_recyclerview.ui.adapter.ListAdapter
 import com.jg.android_recyclerview.ui.adapter.MainAdapterWithoutDiff
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -14,7 +14,7 @@ class AdapterPerformanceTest {
 
     @Test
     fun compareAdapterPerformance() {
-        val diffAdapter = MainAdapter()
+        val diffAdapter = ListAdapter()
         val normalAdapter = MainAdapterWithoutDiff()
 
         // Test 데이터

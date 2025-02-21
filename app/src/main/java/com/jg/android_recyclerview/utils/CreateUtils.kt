@@ -2,6 +2,7 @@ package com.jg.android_recyclerview.utils
 
 import com.jg.android_recyclerview.model.ItemType
 import com.jg.android_recyclerview.model.ListItem
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
 
@@ -15,7 +16,9 @@ object CreateUtils {
             ListItem(
                 id = index.toString(),
                 content = randomChar.toString(),
-                type = ItemType.NORMAL
+                type = ItemType.NORMAL,
+                isRecovering = false,
+                timerJob = Job()
             )
         }
     }

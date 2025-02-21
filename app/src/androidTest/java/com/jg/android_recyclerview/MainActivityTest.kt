@@ -12,7 +12,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.jg.android_recyclerview.ui.activity.MainActivity
-import com.jg.android_recyclerview.ui.adapter.MainAdapter
+import com.jg.android_recyclerview.ui.adapter.ListAdapter
 import org.hamcrest.Matcher
 import org.junit.Rule
 import org.junit.Test
@@ -37,7 +37,7 @@ class MainActivityTest {
         // 첫번째 아이템의 휴지통 아이콘 클릭
         onView(withId(R.id.recyclerView))
             .perform(
-                RecyclerViewActions.actionOnItemAtPosition<MainAdapter.NormalViewHolder>(
+                RecyclerViewActions.actionOnItemAtPosition<ListAdapter.NormalViewHolder>(
                     0,
                     clickChildViewWithId(R.id.ivTrash)
                 )
@@ -53,7 +53,7 @@ class MainActivityTest {
         // 휴지통에 있는 아이템의 복구 아이콘 클릭
         onView(withId(R.id.recyclerView))
             .perform(
-                RecyclerViewActions.actionOnItemAtPosition<MainAdapter.TrashViewHolder>(
+                RecyclerViewActions.actionOnItemAtPosition<ListAdapter.TrashViewHolder>(
                     0,
                     clickChildViewWithId(R.id.ivTrash)
                 )

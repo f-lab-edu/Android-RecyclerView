@@ -117,7 +117,8 @@ class ListViewModel : ViewModel() {
         currentFromList.remove(item)
         val updatedItem = item.copy(
             type = newType,
-            remainingTime = if (newType == ItemType.TRASH) 3000 else null
+            remainingTime = if (newType == ItemType.TRASH) 3000 else null,
+            isRecovering = newType == ItemType.TRASH
         )
 
         if (newType == ItemType.TRASH) {

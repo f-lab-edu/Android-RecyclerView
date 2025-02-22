@@ -11,7 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
-import com.jg.android_recyclerview.ui.adapter.ListAdapter
+import com.jg.android_recyclerview.ui.adapter.ListSampleAdapter
 import com.jg.android_recyclerview.viewmodel.ListViewModel
 import kotlinx.coroutines.launch
 
@@ -23,7 +23,7 @@ abstract class BaseFragment<VB: ViewBinding>(
     protected val binding get() = _binding!!
 
     protected val viewModel: ListViewModel by activityViewModels()
-    protected val listAdapter: ListAdapter by lazy { ListAdapter() }
+    protected val listSampleAdapter: ListSampleAdapter by lazy { ListSampleAdapter() }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -48,14 +48,14 @@ abstract class BaseFragment<VB: ViewBinding>(
     }
 
     private fun setupRecyclerView() {
-        getRecyclerView().adapter = listAdapter
+        getRecyclerView().adapter = listSampleAdapter
     }
 
-    protected fun observeDisplayItems() {
+    private fun observeDisplayItems() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.displayItems.collect { items ->
-                    listAdapter.submitList(items)
+                    listSampleAdapter.submitList(items)
                 }
             }
         }

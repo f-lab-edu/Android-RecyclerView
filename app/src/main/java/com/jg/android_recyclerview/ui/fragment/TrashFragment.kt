@@ -20,7 +20,7 @@ class TrashFragment : BaseFragment<FragmentTrashBinding>(
     }
 
     private fun setupRecyclerView() {
-        listAdapter.setOnItemClickListener { item ->
+        listSampleAdapter.setOnItemClickListener { item ->
             viewModel.restoreItem(item)
         }
     }

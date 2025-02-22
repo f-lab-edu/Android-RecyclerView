@@ -21,7 +21,7 @@ class NormalFragment : BaseFragment<FragmentNormalBinding>(
     }
 
     private fun setupRecyclerView() {
-        listAdapter.setOnItemClickListener { item ->
+        listSampleAdapter.setOnItemClickListener { item ->
             viewModel.moveToTrash(item)
         }
     }

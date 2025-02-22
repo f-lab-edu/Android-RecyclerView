@@ -8,14 +8,14 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.jg.android_recyclerview.databinding.ActivityListBinding
 import com.jg.android_recyclerview.model.ViewMode
-import com.jg.android_recyclerview.ui.adapter.ListAdapter
+import com.jg.android_recyclerview.ui.adapter.ListSampleAdapter
 import com.jg.android_recyclerview.viewmodel.ListViewModel
 import kotlinx.coroutines.launch
 
 class ListActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityListBinding
-    private val listAdapter = ListAdapter()
+    private val listSampleAdapter = ListSampleAdapter()
     private val viewModel: ListViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,9 +30,9 @@ class ListActivity : AppCompatActivity() {
     }
 
     private fun setRecyclerView() {
-        binding.recyclerView.adapter = listAdapter
+        binding.recyclerView.adapter = listSampleAdapter
 
-        listAdapter.setOnItemClickListener { item ->
+        listSampleAdapter.setOnItemClickListener { item ->
             viewModel.switchItemType(type = item.type, item = item)
         }
     }
@@ -52,7 +52,7 @@ class ListActivity : AppCompatActivity() {
         lifecycleScope.launch {
             viewModel.displayItems.collect {
                 repeatOnLifecycle(Lifecycle.State.STARTED) {
-                    listAdapter.submitList(it)
+                    listSampleAdapter.submitList(it)
                 }
             }
         }

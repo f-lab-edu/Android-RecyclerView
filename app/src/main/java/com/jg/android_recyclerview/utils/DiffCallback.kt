@@ -9,7 +9,7 @@ class DiffCallback : DiffUtil.ItemCallback<ListItem>() {
     }
 
     override fun areContentsTheSame(oldItem: ListItem, newItem: ListItem): Boolean {
-        return oldItem == newItem && oldItem.remainingTime == newItem.remainingTime
+        return oldItem == newItem &&
+                oldItem.remainingTime == newItem.remainingTime
     }
-
 }

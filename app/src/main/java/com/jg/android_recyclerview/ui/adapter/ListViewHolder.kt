@@ -14,14 +14,12 @@ sealed class ListViewHolder(binding: ItemListBinding) : RecyclerView.ViewHolder(
 }
 
 class NormalViewHolder(private val binding: ItemListBinding) : ListViewHolder(binding) {
-    init {
-        binding.progressBar.visibility = View.GONE
-    }
+
     override fun bind(item: ListItem, onItemClick: ((ListItem) -> Unit)?) {
         binding.apply {
             tvContent.text = item.content
-
-            ivTrash.setOnClickListener {
+            progressBar.visibility = View.GONE   // 복구 했다가, 다시 삭제로 왔을 경우 업데이트가 필요
+            layoutConstraint.setOnClickListener {
                 onItemClick?.invoke(item)
             }
         }
@@ -31,24 +29,35 @@ class NormalViewHolder(private val binding: ItemListBinding) : ListViewHolder(bi
 class TrashViewHolder(private val binding: ItemListBinding) : ListViewHolder(binding) {
     override fun bind(item: ListItem, onItemClick: ((ListItem) -> Unit)?) {
         binding.apply {
-            tvContent.text = "${item.content} (휴지통)"
             progressBar.visibility = View.VISIBLE
-            progressBar.progress = item.remainingTime ?: 3000
             ivTrash.setImageResource(R.drawable.ic_restore)
-            ivTrash.setOnClickListener {
-                tvContent.text = "${item.content} (복구중)"
+            progressBar.progress = item.remainingTime ?: 3000
 
-                // 색상 변경
-                progressBar.apply {
-                    progressTintList = ColorStateList.valueOf(
-                        ContextCompat.getColor(
-                            context,
-                            if (item.isRecovering) R.color.progress_restore else R.color.progress_delete
+            when {
+                item.isRecovering -> {
+                    // 복구 진행 중
+                    tvContent.text = "${item.content} (복구중)"
+                    progressBar.apply {
+                        progressTintList = ColorStateList.valueOf(
+                            ContextCompat.getColor(context, R.color.progress_restore)
                         )
-                    )
-                    contentDescription = if (item.isRecovering) "복구 진행중" else "삭제 진행중"
+                        contentDescription = "복구 진행중"
+                    }
                 }
 
+                else -> {
+                    // 삭제 진행 중
+                    tvContent.text = "${item.content} (휴지통)"
+                    progressBar.apply {
+                        progressTintList = ColorStateList.valueOf(
+                            ContextCompat.getColor(context, R.color.progress_delete)
+                        )
+                        progressBar.contentDescription = "삭제 진행중"
+                    }
+                }
+            }
+
+            layoutConstraint.setOnClickListener {
                 onItemClick?.invoke(item)
             }
         }

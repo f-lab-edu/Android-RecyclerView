@@ -6,17 +6,18 @@ import com.jg.android_recyclerview.model.ItemType
 import com.jg.android_recyclerview.model.ListItem
 import com.jg.android_recyclerview.model.ViewMode
 import com.jg.android_recyclerview.utils.CreateUtils
-import com.jg.android_recyclerview.utils.CreateUtils.createTimerFlow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class ListViewModel : ViewModel() {
@@ -37,41 +38,12 @@ class ListViewModel : ViewModel() {
     }
 
     fun createItems() {
-        _items.value = CreateUtils.createRandomAlphabetItems()
+        _items.update {
+            CreateUtils.createRandomAlphabetItems()
+        }
     }
 
     private val timerScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
-    private val timerJobs = mutableMapOf<String, Job>()
-
-    private fun startTimer(item: ListItem, onTimerComplete: (ListItem) -> Unit) {
-        // 이전 타이머 취소 (중복 실행 : 같은 아이템에 대해 여러 타이머가 실행될 여지를 위함)
-        timerJobs[item.id]?.cancel()
-
-        // TODO 뭔가 타이밍 이슈가 있는데 잡질 못한다..
-        timerJobs[item.id] = timerScope.launch {
-            createTimerFlow().collect { remainingTime ->
-                // 현재 아이템이 휴지통에 있는 경우에만 업데이트
-                if (_trashItems.value.any { it.id == item.id }) {
-                    val updatedTrashItems = _trashItems.value.toMutableList()
-                    val index = updatedTrashItems.indexOfFirst { it.id == item.id }
-                    if (index != -1) {
-                        updatedTrashItems[index] = updatedTrashItems[index].copy(
-                            remainingTime = remainingTime.toInt()
-                        )
-                        _trashItems.value = updatedTrashItems
-                    }
-                } else {
-                    // 휴지통에 없으면 타이머 취소
-                    timerJobs[item.id]?.cancel()
-                    timerJobs.remove(item.id)
-                    return@collect
-                }
-            }
-            onTimerComplete(item)
-            timerJobs.remove(item.id)
-        }
-
-    }
 
     fun switchItemType(type: ItemType, item: ListItem) {
         when (type) {
@@ -80,82 +52,117 @@ class ListViewModel : ViewModel() {
         }
     }
 
+    private fun startItemTimer(
+        item: ListItem,
+        stateFlow: MutableStateFlow<List<ListItem>>,
+        onComplete: (ListItem) -> Unit
+    ): Job {
+        return timerScope.launch {
+            try {
+                (3 downTo 1).forEach { time ->
+                    stateFlow.update { currentList ->
+                        currentList.map { listItem ->
+                            if (listItem.id == item.id) {
+                                listItem.copy(
+                                    remainingTime = time * 1000,
+                                    isRecovering = item.isRecovering
+                                )
+                            } else listItem
+                        }
+                    }
+                    delay(1000L)
+                }
+                onComplete(item)
+            } catch (e: Exception) {
+                // 타이머 취소 시 예외 처리
+                println("Timer cancelled for item ${item.id}")
+            }
+        }
+    }
+
     fun moveToTrash(item: ListItem) {
-        updateItems(
-            item = item,
-            fromList = _items,
-            toList = _trashItems,
-            newType = ItemType.TRASH,
-            onTimerComplete = { deleteCompletely(it) }
+        // 휴지통으로 이동
+        _items.update { items ->
+            items.filterNot {
+                it.id == item.id
+            }
+        }
+        val updatedItem = item.copy(
+            type = ItemType.TRASH,
+            isRecovering = false,
+            timerJob = startItemTimer(
+                item = item,
+                stateFlow = _trashItems,
+                onComplete = { deleteCompletely(it) }
+            )
         )
+        _trashItems.update { currentItems ->
+            currentItems + updatedItem
+        }
     }
 
     fun restoreItem(item: ListItem) {
-        updateItems(
-            item = item,
-            fromList = _trashItems,
-            toList = _items,
-            newType = ItemType.NORMAL,
-            onTimerComplete = { }
-        )
-    }
 
-    private fun updateItems(
-        item: ListItem,
-        fromList: MutableStateFlow<List<ListItem>>,
-        toList: MutableStateFlow<List<ListItem>>,
-        newType: ItemType,
-        onTimerComplete: (ListItem) -> Unit
-    ) {
-        // 기존 타이머 취소
-        timerJobs[item.id]?.cancel()
-        timerJobs.remove(item.id)
+        if (!item.isRecovering) {
+            // 기존 Job 취소
+            item.timerJob?.cancel()
 
-        val currentFromList = fromList.value.toMutableList()
-        val currentToList = toList.value.toMutableList()
+            // 먼저 복구 상태로 변경
+            _trashItems.update { trashItems ->
+                trashItems.map { existingItem ->
+                    if (existingItem.id == item.id) {
+                        existingItem.copy(
+                            isRecovering = true,
+                            remainingTime = 3000,
+                            timerJob = null
+                        )
+                    } else existingItem
+                }
+            }
 
-        currentFromList.remove(item)
-        val updatedItem = item.copy(
-            type = newType,
-            remainingTime = if (newType == ItemType.TRASH) 3000 else null,
-            isRecovering = newType == ItemType.TRASH
-        )
+            // 현재 아이템 찾기
+            val updatedItem = _trashItems.value.find { it.id == item.id } ?: return
 
-        if (newType == ItemType.TRASH) {
-            currentToList.add(updatedItem)
+            // 새 타이머 시작
+            val newTimerJob = startItemTimer(
+                item = updatedItem,
+                stateFlow = _trashItems
+            ) { completedItem ->
+                // 복구 완료 시
+                _trashItems.update { items ->
+                    items.filterNot { it.id == completedItem.id }
+                }
+                _items.update { items ->
+                    items + completedItem.copy(
+                        type = ItemType.NORMAL,
+                        isRecovering = false,
+                        remainingTime = null,
+                        timerJob = null
+                    )
+                }
+            }
 
-            // 휴지통으로 이동 시 즉시 리스트 갱신
-            fromList.value = currentFromList
-            toList.value = currentToList
-
-            startTimer(updatedItem, onTimerComplete)
-        } else {
-            // 복구 시 타이머 완료 후 리스트 갱신
-            startTimer(updatedItem) {
-                currentToList.add(updatedItem)
-                fromList.value = currentFromList
-                toList.value = currentToList
+            // 타이머 Job 설정
+            _trashItems.update { trashItems ->
+                trashItems.map { existingItem ->
+                    if (existingItem.id == item.id) {
+                        existingItem.copy(timerJob = newTimerJob)
+                    } else existingItem
+                }
             }
         }
     }
 
     private fun deleteCompletely(item: ListItem) {
-        // 휴지통에서 완전 삭제
-        val currentTrashItems = _trashItems.value.toMutableList()
-        currentTrashItems.removeAll { it.id == item.id }
-        _trashItems.value = currentTrashItems
+        _trashItems.update { list -> list.filterNot { it.id == item.id } }
     }
 
     fun switchToTrashOrNormal() {
-        _currentMode.value = when (_currentMode.value) {
-            ViewMode.NORMAL -> ViewMode.TRASH
-            ViewMode.TRASH -> ViewMode.NORMAL
-        }
+        _currentMode.update { if (it == ViewMode.NORMAL) ViewMode.TRASH else ViewMode.NORMAL }
     }
 
     override fun onCleared() {
         super.onCleared()
-        timerJobs.values.forEach { it.cancel() }
         timerScope.cancel() // ViewModel 소멸 시 모든 코루틴 취소
     }
 }

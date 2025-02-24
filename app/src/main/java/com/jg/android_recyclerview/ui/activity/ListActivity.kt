@@ -50,8 +50,8 @@ class ListActivity : AppCompatActivity() {
         }
 
         lifecycleScope.launch {
-            viewModel.displayItems.collect {
-                repeatOnLifecycle(Lifecycle.State.STARTED) {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.displayItems.collect {
                     listSampleAdapter.submitList(it)
                 }
             }
@@ -63,6 +63,4 @@ class ListActivity : AppCompatActivity() {
             viewModel.switchToTrashOrNormal()
         }
     }
-
-
 }

@@ -7,7 +7,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
 
 object CreateUtils {
-    const val TIMER_DURATION = 3000L  // 3초
     private const val TOTAL_ITEMS = 50
 
     fun createRandomAlphabetItems() : List<ListItem> {
@@ -18,18 +17,8 @@ object CreateUtils {
                 content = randomChar.toString(),
                 type = ItemType.NORMAL,
                 isRecovering = false,
-                timerJob = Job()
+                timerJob = null
             )
         }
-    }
-
-    fun createTimerFlow() = flow {
-        var remainingTime = TIMER_DURATION
-        while (remainingTime > 0) {
-            emit(remainingTime)
-            delay(1000)
-            remainingTime -= 1000
-        }
-        emit(0)
     }
 }

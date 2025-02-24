@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ListViewModel : ViewModel() {
     private val _items = MutableStateFlow<List<ListItem>>(emptyList())
@@ -80,76 +81,90 @@ class ListViewModel : ViewModel() {
         }
     }
 
-    fun moveToTrash(item: ListItem) {
-        // 휴지통으로 이동
-        _items.update { items ->
-            items.filterNot {
-                it.id == item.id
+    private fun startItemTimer(
+        itemId: String,
+        remainingSeconds: Int,
+        isRecovering: Boolean
+    ): Job = timerScope.launch {
+        try {
+            if (remainingSeconds <= 0) {
+                withContext(Dispatchers.Main) {
+                    _trashItems.value.find { it.id == itemId }?.let { item ->
+                        item.timerJob?.cancel()
+                        if (item.isRecovering) {
+                            completeRestore(item)
+                        } else {
+                            deleteCompletely(item)
+                        }
+                    }
+                }
+                return@launch
             }
-        }
-        val updatedItem = item.copy(
-            type = ItemType.TRASH,
-            isRecovering = false,
-            timerJob = startItemTimer(
-                item = item,
-                stateFlow = _trashItems,
-                onComplete = { deleteCompletely(it) }
-            )
-        )
-        _trashItems.update { currentItems ->
-            currentItems + updatedItem
+
+            _trashItems.update { items ->
+                items.map {
+                    if (it.id == itemId) {
+                        it.copy(remainingTime = remainingSeconds * 1000)
+                    } else it
+                }
+            }
+
+            delay(1000)
+
+            _trashItems.value.find { it.id == itemId }?.let { updatedItem ->
+                if (updatedItem.isRecovering == isRecovering) {
+                    startItemTimer(itemId, remainingSeconds - 1, isRecovering)
+                }
+            }
+        } catch (e: Exception) {
+            println("Timer cancelled for item $itemId")
         }
     }
 
-    fun restoreItem(item: ListItem) {
+    fun moveToTrash(item: ListItem) {
+        if (item.type == ItemType.TRASH || _trashItems.value.any { it.id == item.id }) {
+            return
+        }
 
+        _items.update { it.filterNot { it.id == item.id } }
+
+        val trashItem = item.copy(
+            type = ItemType.TRASH,
+            remainingTime = 3000,
+            timerJob = startItemTimer(item.id, 3, false)
+        )
+
+        _trashItems.update { it + trashItem }
+    }
+
+    fun restoreItem(item: ListItem) {
         if (!item.isRecovering) {
-            // 기존 Job 취소
             item.timerJob?.cancel()
 
-            // 먼저 복구 상태로 변경
-            _trashItems.update { trashItems ->
-                trashItems.map { existingItem ->
-                    if (existingItem.id == item.id) {
-                        existingItem.copy(
+            _trashItems.update { items ->
+                items.map {
+                    if (it.id == item.id) {
+                        it.copy(
                             isRecovering = true,
                             remainingTime = 3000,
-                            timerJob = null
+                            timerJob = startItemTimer(item.id, 3, true)
                         )
-                    } else existingItem
+                    } else it
                 }
             }
+        }
 
-            // 현재 아이템 찾기
-            val updatedItem = _trashItems.value.find { it.id == item.id } ?: return
+    }
 
-            // 새 타이머 시작
-            val newTimerJob = startItemTimer(
-                item = updatedItem,
-                stateFlow = _trashItems
-            ) { completedItem ->
-                // 복구 완료 시
-                _trashItems.update { items ->
-                    items.filterNot { it.id == completedItem.id }
-                }
-                _items.update { items ->
-                    items + completedItem.copy(
-                        type = ItemType.NORMAL,
-                        isRecovering = false,
-                        remainingTime = null,
-                        timerJob = null
-                    )
-                }
-            }
-
-            // 타이머 Job 설정
-            _trashItems.update { trashItems ->
-                trashItems.map { existingItem ->
-                    if (existingItem.id == item.id) {
-                        existingItem.copy(timerJob = newTimerJob)
-                    } else existingItem
-                }
-            }
+    private fun completeRestore(item: ListItem) {
+        _trashItems.update { it.filterNot { it.id == item.id } }
+        _items.update {
+            it + item.copy(
+                type = ItemType.NORMAL,
+                isRecovering = false,
+                remainingTime = null,
+                timerJob = null
+            )
         }
     }
 
@@ -163,6 +178,7 @@ class ListViewModel : ViewModel() {
 
     override fun onCleared() {
         super.onCleared()
+        _trashItems.value.forEach { it.timerJob?.cancel() }
         timerScope.cancel() // ViewModel 소멸 시 모든 코루틴 취소
     }
 }

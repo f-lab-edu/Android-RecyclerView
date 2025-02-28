@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupBtn() {
         binding.btnActivity.setOnClickListener {
-            // Navigation 대신 Intent 사용
+            // Intent 사용 - 액티비티 전환
             startActivity(Intent(this, ListActivity::class.java))
         }
 

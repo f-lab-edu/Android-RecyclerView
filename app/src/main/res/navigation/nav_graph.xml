@@ -3,31 +3,31 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/FirstFragment">
+    app:startDestination="@id/NormalFragment">
 
     <fragment
-        android:id="@+id/FirstFragment"
+        android:id="@+id/NormalFragment"
         android:name="com.jg.android_recyclerview.ui.fragment.NormalFragment"
         android:label="Normal List"
         tools:layout="@layout/fragment_normal">
 
         <action
-            android:id="@+id/action_FirstFragment_to_SecondFragment"
-            app:destination="@id/SecondFragment" />
+            android:id="@+id/action_NormalFragment_to_TrashFragment"
+            app:destination="@id/TrashFragment" />
     </fragment>
     <fragment
-        android:id="@+id/SecondFragment"
+        android:id="@+id/TrashFragment"
         android:name="com.jg.android_recyclerview.ui.fragment.TrashFragment"
         android:label="Trash List"
         tools:layout="@layout/fragment_trash">
 
         <action
-            android:id="@+id/action_SecondFragment_to_FirstFragment"
-            app:destination="@id/FirstFragment" />
+            android:id="@+id/action_TrashFragment_to_NormalFragment"
+            app:destination="@id/NormalFragment" />
     </fragment>
 
     <action
         android:id="@+id/action_global_FirstFragment"
-        app:destination="@id/FirstFragment" />
+        app:destination="@id/NormalFragment" />
 
 </navigation>

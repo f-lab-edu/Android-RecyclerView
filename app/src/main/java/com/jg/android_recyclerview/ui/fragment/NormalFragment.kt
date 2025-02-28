@@ -31,7 +31,7 @@ class NormalFragment : BaseFragment<FragmentNormalBinding>(
     override fun setupButton() {
         binding.btnShowTrash.setOnClickListener {
             viewModel.switchToTrashOrNormal()
-            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
+            findNavController().navigate(R.id.action_NormalFragment_to_TrashFragment)
         }
     }
 }

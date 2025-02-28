@@ -2,7 +2,9 @@ package com.jg.android_recyclerview.ui.fragment
 
 import android.os.Bundle
 import android.view.View
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
+import com.jg.android_recyclerview.R
 import com.jg.android_recyclerview.databinding.FragmentTrashBinding
 import com.jg.android_recyclerview.ui.base.BaseFragment
 
@@ -30,7 +32,11 @@ class TrashFragment : BaseFragment<FragmentTrashBinding>(
     override fun setupButton() {
         binding.btnShowNormal.setOnClickListener {
             viewModel.switchToTrashOrNormal()
-            findNavController().popBackStack()
+            findNavController().navigate(
+                R.id.action_TrashFragment_to_NormalFragment,
+                null,
+                NavOptions.Builder().setPopUpTo(R.id.NormalFragment, true).build()
+            )
         }
     }
 }

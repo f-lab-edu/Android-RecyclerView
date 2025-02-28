@@ -24,11 +24,13 @@ class ListActivity : AppCompatActivity() {
         binding = ActivityListBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setRecyclerView()
-        observeViewModel()
-        setupBtn()
+        // 초기 설정 메서드들 호출
+        setRecyclerView()  
+        observeViewModel() 
+        setupBtn()       
     }
 
+    // RecyclerView 초기 설정
     private fun setRecyclerView() {
         binding.recyclerView.adapter = listSampleAdapter
 
@@ -37,13 +39,15 @@ class ListActivity : AppCompatActivity() {
         }
     }
 
+    // ViewModel의 데이터 변화를 관찰
     private fun observeViewModel() {
+        // 현재 모드(NORMAL/TRASH)를 관찰하여 버튼 텍스트 업데이트
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.currentMode.collect { mode ->
                     binding.btnToggle.text = when (mode) {
-                        ViewMode.NORMAL -> "휴지통 보기"
-                        ViewMode.TRASH -> "목록 보기"
+                        ViewMode.NORMAL -> "휴지통 보기" // 일반 모드일 때 버튼 텍스트
+                        ViewMode.TRASH -> "목록 보기"   // 휴지통 모드일 때 버튼 텍스트
                     }
                 }
             }
@@ -52,13 +56,14 @@ class ListActivity : AppCompatActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.displayItems.collect {
-                    listSampleAdapter.submitList(it)
+                    listSampleAdapter.submitList(it) // 새로운 리스트로 UI 업데이트
                 }
             }
         }
     }
 
     private fun setupBtn() {
+        // 버튼 클릭시 일반/휴지통 모드 전환
         binding.btnToggle.setOnClickListener {
             viewModel.switchToTrashOrNormal()
         }
